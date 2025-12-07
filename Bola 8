@@ -1,28 +1,188 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Bola 8</title>
-<style>
-  body {
-    font-family: sans-serif;
-    text-align: center;
-    margin-top: 120px;
-    font-size: 48px;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Bola 8</title>
+  <!-- Carga de la fuente Bitcount Prop Single -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bitcount+Prop+Single:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at center, #0a0f1d 0%, #000 70%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+    }
+
+    .container {
+      position: relative;
+      width: min(95vw, 500px);
+      aspect-ratio: 1/1;
+      filter: drop-shadow(0 0 50px #6f2cff) drop-shadow(0 0 90px #0050ff);
+    }
+
+    .ball {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #303030 0%, #050505 60%, #000 85%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow:
+        inset 20px 20px 40px rgba(0,0,0,0.7),
+        inset -20px -20px 40px rgba(255,255,255,0.06);
+    }
+
+    .reflection {
+      position: absolute;
+      top: 14%;
+      left: 20%;
+      width: 55%;
+      height: 20%;
+      background: radial-gradient(circle, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      transform: rotate(-15deg);
+      filter: blur(8px);
+      opacity: 0.35;
+    }
+
+    .triangle {
+      position: absolute;
+      width: 62%;
+      height: 62%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+      filter: drop-shadow(0 0 10px #1a4dff);
+    }
+
+    .answer {
+      position: absolute;
+      width: 62%;
+      height: 62%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #cde0ff;
+      font-family: 'Bitcount Prop Single', sans-serif; /* <-- aplica la fuente aquí */
+      font-weight: 700;
+      font-size: clamp(16px, 4.5vw, 28px);
+      line-height: 1.2;
+      text-align: center;
+      text-shadow: 0 0 6px #0030ff;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 50%;
+      overflow: hidden;
+
+      /* Máscara SVG si la usas */
+      -webkit-mask-image: url(#triangle-mask);
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      -webkit-mask-size: contain;
+
+      mask-image: url(#triangle-mask);
+      mask-repeat: no-repeat;
+      mask-position: center;
+      mask-size: contain;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-8px, 5px); }
+      40% { transform: translate(7px, -6px); }
+      60% { transform: translate(-6px, -4px); }
+      80% { transform: translate(5px, 6px); }
+    }
+
+    .shaking {
+      animation: shake 0.6s ease-in-out;
+    }
+
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    .animate {
+      animation: fadeInScale 0.6s ease forwards;
+    }
+
+  </style>
 </head>
 <body>
-<script>
-  const respuestas = [
-    "Sí",
-    "No",
-    "Tal vez",
-    "Probablemente sí",
-    "Probablemente no",
-    "Pregunta otra vez"
-  ];
-  document.write(respuestas[Math.floor(Math.random() * respuestas.length)]);
-</script>
+
+  <div class="container" id="bola">
+    <div class="ball">
+      <div class="reflection"></div>
+    </div>
+
+    <svg class="triangle" viewBox="0 0 100 100">
+      <polygon points="50,100 0,14 100,14" fill="#0d3cff"/>
+    </svg>
+
+    <div class="answer" id="answer"></div>
+
+    <svg width="0" height="0">
+      <defs>
+        <mask id="triangle-mask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+          <polygon points="0.5,1 0,0.14 1,0.14" fill="white"/>
+        </mask>
+      </defs>
+    </svg>
+  </div>
+
+  <script>
+    const respuestas = [
+      "🖕",
+      "TÚ SABRÁS",
+      "NOO",
+      "NAAH",
+      "¿ENSERIO?",
+      "NO SE JAJA",
+      "SIN DUDA",
+      "SIII",
+      "QUE VA",
+      "PIENSA",
+      "YA VES"
+    ];
+
+    const bola = document.getElementById("bola");
+    const texto = document.getElementById("answer");
+
+    function activarBola8() {
+      texto.textContent = "";
+      texto.classList.remove("animate");
+      bola.classList.add("shaking");
+
+      setTimeout(() => {
+        bola.classList.remove("shaking");
+        const respuesta = respuestas[Math.floor(Math.random() * respuestas.length)];
+        texto.textContent = respuesta;
+
+        void texto.offsetWidth;
+        texto.classList.add("animate");
+      }, 600);
+    }
+
+    bola.addEventListener("click", activarBola8);
+    activarBola8();
+  </script>
+
 </body>
 </html>
