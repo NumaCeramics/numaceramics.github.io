@@ -7,18 +7,6 @@
   <!-- Fuente VT323 -->
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
-  <!-- Glow SVG perfecto para iPhone (sin esfera rara) -->
-  <svg width="0" height="0" style="position:absolute;">
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%" filterUnits="userSpaceOnUse">
-      <feGaussianBlur stdDeviation="6" result="blur" />
-      <feMerge>
-        <feMergeNode in="blur" />
-        <feMergeNode in="blur" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
-    </filter>
-  </svg>
-
   <style>
     :root {
       --max-width: 700px;
@@ -60,7 +48,6 @@
       position: absolute;
       width: 90%;
       height: 90%;
-      filter: url(#glow);
       image-rendering: optimizeQuality;
       shape-rendering: geometricPrecision;
     }
@@ -74,7 +61,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       color: white;
-      font-size: min(20vw, 65px);
+      font-size: min(25vw, 75px);
       text-align: center;
 
       display: flex;
@@ -121,7 +108,7 @@
     .footer {
       margin-top: 5vh;
       margin-bottom: 4vh;
-      font-size: min(15vw, 45px);
+      font-size: min(20vw, 55px);
     }
 
     .footer a {
