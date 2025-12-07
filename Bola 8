@@ -2,135 +2,186 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Bola 8 Retro Misterio</title>
+  <title>Bola 8 Mágica</title>
+
+  <!-- Fuente VT323 -->
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --max-width: 700px;
+    }
+
     body {
-      background: #111;
-      color: white;
-      font-family: monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      font-family: 'VT323', monospace;
+      display: flex;
       flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
 
-    .ball-container {
+    h1 {
+      margin-top: 5vh;
+      font-size: min(20vw, 90px);
+      text-align: center;
+    }
+
+    /* CONTENEDOR */
+    .container {
       position: relative;
-      width: 300px;
-      height: 300px;
-    }
-
-    .ball {
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 30% 30%, #222, #000);
-      border-radius: 50%;
+      width: min(95vw, var(--max-width));
+      aspect-ratio: 1/1;
+      margin-top: 3vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s;
-    }
-
-    .ball.shake {
-      animation: shake 0.35s infinite;
-    }
-
-    @keyframes shake {
-      0%   { transform: translate(2px, 2px) rotate(0deg); }
-      25%  { transform: translate(-2px, 1px) rotate(-1deg); }
-      50%  { transform: translate(3px, -1px) rotate(1deg); }
-      75%  { transform: translate(-1px, -2px) rotate(0deg); }
-      100% { transform: translate(2px, 2px) rotate(-1deg); }
     }
 
     /* TRIÁNGULO */
     .triangle {
-      width: 0;
-      height: 0;
-      border-left: 75px solid transparent;
-      border-right: 75px solid transparent;
-      border-bottom: 130px solid #0048ff;
       position: absolute;
-      top: 75px;
+      width: 90%;
+      height: 90%;
+      image-rendering: optimizeQuality;
+      shape-rendering: geometricPrecision;
     }
 
-    /* TEXTO DENTRO DEL TRIÁNGULO */
-    .triangle-text {
+    /* RESPUESTA */
+    .answer {
       position: absolute;
-      top: 105px;
-      width: 120px;
-      text-align: center;
+      width: 60%;
+      height: 60%;
+      top: 52%;
       left: 50%;
-      transform: translateX(-50%);
-      font-size: 14px;
-      line-height: 1.2;
-      padding: 5px;
+      transform: translate(-50%, -50%);
       color: white;
-      clip-path: polygon(0 0, 100% 0, 82% 100%, 18% 100%);
+      font-size: min(25vw, 75px);
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 35%;
+      pointer-events: none;
+      white-space: pre-wrap;
+      text-shadow: 0 0 8px #0030ff;
+      opacity: 0;
     }
+
+    /* Animación aparición */
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    .animate { animation: fadeInScale 0.6s ease forwards; }
+
+    /* Temblor */
+    @keyframes shake {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-10px, 5px); }
+      40% { transform: translate(10px, -6px); }
+      60% { transform: translate(-8px, -4px); }
+      80% { transform: translate(7px, 8px); }
+    }
+    .shaking { animation: shake 0.6s ease-in-out; }
 
     button {
-      margin-top: 20px;
-      padding: 12px 24px;
-      background: #333;
-      border: 1px solid #555;
+      margin-top: 5vh;
+      padding: 2vh 8vh;
+      font-size: min(12vw, 55px);
+      font-family: 'VT323', monospace';
+      background: black;
       color: white;
+      border: 4px solid white;
       cursor: pointer;
-      font-family: monospace;
     }
 
-    button:hover {
-      background: #444;
+    .footer {
+      margin-top: 5vh;
+      margin-bottom: 4vh;
+      font-size: min(20vw, 55px);
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: underline;
     }
   </style>
 </head>
+
 <body>
 
-<div class="ball-container">
-  <div class="ball" id="ball">
-    <div class="triangle"></div>
-    <div class="triangle-text" id="text">PREGUNTA...</div>
+  <h1>Bola 8 Mágica</h1>
+
+  <div class="container" id="bola">
+    <svg class="triangle" viewBox="0 0 100 100">
+      <polygon points="50,100 0,14 100,14" fill="#2749F5"/>
+    </svg>
+    <div class="answer" id="answer"></div>
   </div>
-</div>
 
-<button onclick="shakeBall()">Consultar</button>
+  <button onclick="activarBola8()">Agitar</button>
 
-<audio id="misterio" src="audio/misterio.mp3"></audio>
+  <div class="footer">
+    By: <a href="https://www.instagram.com/numa.bombareli/" target="_blank">numa.bombareli</a>
+  </div>
 
-<script>
-const respuestas = [
-  "SÍ",
-  "NO",
-  "PUEDE SER",
-  "INTÉNTALO",
-  "COMO VES",
-  "CLARO",
-  "YA VES"
-];
+  <!-- 🔊 AUDIO -->
+  <audio id="misterySound">
+    <source src="mystery.mp3" type="audio/mpeg">
+  </audio>
 
-function shakeBall() {
-  const ball = document.getElementById("ball");
-  const text = document.getElementById("text");
-  const audio = document.getElementById("misterio");
+  <script>
+    const respuestas = [
+      "🖕",
+      "TÚ SABRÁS",
+      "NOO",
+      "NAAH",
+      "¿ENSERIO?",
+      "NO SE JAJA",
+      "SIN DUDA",
+      "SIII",
+      "QUE VA",
+      "PIENSA",
+      "YA VES"
+    ];
 
-  text.textContent = "";
-  ball.classList.add("shake");
+    const bola = document.getElementById("bola");
+    const texto = document.getElementById("answer");
+    const sonido = document.getElementById("misterySound");
 
-  audio.currentTime = 0;
-  audio.play();
+    function activarBola8() {
+      texto.textContent = "";
+      texto.classList.remove("animate");
+      texto.style.opacity = 0;
 
-  // 3.5 segundos exactos = duración útil del audio
-  setTimeout(() => {
-    ball.classList.remove("shake");
-    const r = respuestas[Math.floor(Math.random() * respuestas.length)];
-    text.textContent = r;
-  }, 3500);
-}
-</script>
+      // 1. TIEMBLA
+      bola.classList.add("shaking");
+
+      // 2. PARA de temblar y entonces suena + aparece respuesta
+      setTimeout(() => {
+        bola.classList.remove("shaking");
+
+        // AUDIO sincronizado al parar
+        sonido.currentTime = 0;
+        sonido.play().catch(()=>{});
+
+        // Generar respuesta
+        const respuesta = respuestas[Math.floor(Math.random() * respuestas.length)];
+        texto.textContent = respuesta;
+
+        // Animación
+        void texto.offsetWidth;
+        texto.classList.add("animate");
+
+      }, 600); // <- el tiempo del temblor
+    }
+
+    activarBola8();
+  </script>
 
 </body>
 </html>
