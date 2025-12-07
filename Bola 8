@@ -76,7 +76,7 @@
       opacity: 0;
     }
 
-    /* Animación aparición (3.5s exactos para sincronizar con el audio) */
+    /* Animación aparición */
     @keyframes fadeInScale {
       0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
       100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -165,23 +165,21 @@
 
       bola.classList.add("shaking");
 
-      /* Temblor dura 0.6s — luego empieza audio y fade sincronizado */
       setTimeout(() => {
         bola.classList.remove("shaking");
 
         const respuesta = respuestas[Math.floor(Math.random() * respuestas.length)];
         texto.textContent = respuesta;
 
-        /* Reproducir sonido */
         audio.play();
 
-        /* Forzar reinicio de animación */
         void texto.offsetWidth;
         texto.classList.add("animate");
       }, 600);
     }
 
-    /* Ya no se ejecuta al cargar — solo con el botón */
+    /* ✔ Ejecutar al cargar */
+    window.onload = activarBola8;
   </script>
 
 </body>
